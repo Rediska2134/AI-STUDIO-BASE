@@ -11,6 +11,7 @@ All vendored skills live under `.agents/skills/` and travel with the repository.
 - Change the skill set only when the task explicitly asks for a skill update or maintenance pass.
 - Treat third-party skill source files as vendored dependencies: preserve their contents unless intentionally updating them.
 - Load only the specialist skills that materially help the current task. Do not stack every skill into every prompt.
+- Before changing shared AI infrastructure, plugin/MCP/hook policy, or the template architecture itself, read `AI_RUNTIME.md`.
 
 ## 2. Project source of truth
 
@@ -91,6 +92,7 @@ Use the installed specialist skills when they match the task. For example:
 
 - browser testing / screenshots / live UI QA: `agent-browser`
 - UI / website direction: `ui-ux-pro-max`, `frontend-design`, `web-design-guidelines`
+- marketing page copy / headlines / CTAs: `copywriting`
 - planning stress-test: `grill-me` / `grilling`
 - video / motion: `hyperframes`, with `hyperframes-creative` when relevant
 - issue / PR triage: `triage`, with `domain-modeling` when its workflow requires it
