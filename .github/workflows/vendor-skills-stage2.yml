@@ -1,0 +1,109 @@
+name: Vendor Codex skills - stage 2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vendor-skills-stage2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  vendor-stage-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Prepare npm cache
+        run: mkdir -p "$RUNNER_TEMP/npm-cache"
+
+      - name: Install triage with required domain-modeling dependency
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm-cache
+        run: |
+          npx --yes skills add https://github.com/mattpocock/skills \
+            --skill triage \
+            --skill domain-modeling \
+            --agent codex \
+            --copy \
+            --yes
+
+      - name: Verify triage
+        run: |
+          test -f .agents/skills/triage/SKILL.md
+          test -f .agents/skills/triage/AGENT-BRIEF.md
+          test -f .agents/skills/triage/OUT-OF-SCOPE.md
+          test -f .agents/skills/domain-modeling/SKILL.md
+          test -f .agents/skills/grilling/SKILL.md
+          grep -q 'domain-modeling' .agents/skills/triage/SKILL.md
+
+      - name: Install hyperframes-creative
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm-cache
+        run: |
+          npx --yes skills add https://github.com/heygen-com/hyperframes \
+            --skill hyperframes-creative \
+            --agent codex \
+            --copy \
+            --yes
+
+      - name: Verify hyperframes-creative
+        run: |
+          test -f .agents/skills/hyperframes-creative/SKILL.md
+          test -d .agents/skills/hyperframes-creative/frame-presets
+          test -d .agents/skills/hyperframes-creative/palettes
+          test -d .agents/skills/hyperframes-creative/references
+          test -d .agents/skills/hyperframes-creative/scripts
+          test -d .agents/skills/hyperframes-creative/templates
+          test -f .agents/skills/hyperframes-creative/references/design-spec.md
+          test -f .agents/skills/hyperframes-creative/scripts/contrast-report.mjs
+          test -f .agents/skills/hyperframes-creative/templates/design-picker.html
+          test -f .agents/skills/hyperframes-creative/frame-presets/code-editorial/fonts/EBGaramond-400.woff2
+          node --check .agents/skills/hyperframes-creative/scripts/contrast-report.mjs
+          node --check .agents/skills/hyperframes-creative/scripts/package-loader.mjs
+          python3 -m py_compile .agents/skills/hyperframes-creative/scripts/extract-audio-data.py
+
+      - name: Install web-design-guidelines
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm-cache
+        run: |
+          npx --yes skills add https://github.com/vercel-labs/agent-skills \
+            --skill web-design-guidelines \
+            --agent codex \
+            --copy \
+            --yes
+
+      - name: Verify web-design-guidelines
+        run: |
+          test -f .agents/skills/web-design-guidelines/SKILL.md
+
+      - name: Verify autonomous copies
+        run: |
+          if find .agents/skills -type l -print -quit | grep -q .; then
+            echo 'ERROR: symlinks found under .agents/skills; vendored skills must be autonomous copies.'
+            find .agents/skills -type l -print
+            exit 1
+          fi
+          printf 'Installed skill directories:\n'
+          find .agents/skills -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
+
+      - name: Commit vendored stage 2 skills
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/skills
+          if git diff --cached --quiet; then
+            echo 'No skill changes to commit.'
+            exit 0
+          fi
+          git commit -m 'chore: vendor second Codex skills batch'
+          git push origin HEAD:main
