@@ -3,3 +3,10 @@
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
+
+# Context7 provides up-to-date third-party library documentation.
+# Basic access works without authentication. If a project later needs higher
+# limits, add a CONTEXT7_API_KEY through the execution environment rather than
+# committing a secret to this repository.
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
