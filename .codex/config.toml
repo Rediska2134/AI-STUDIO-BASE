@@ -1,0 +1,5 @@
+# Project-local Codex configuration.
+# Codex loads this layer only when the repository is trusted.
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
