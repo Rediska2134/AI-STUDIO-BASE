@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Kickoff"
+  short_description: "Ground and start a reusable project"
+  default_prompt: "Initialize or resume this project from the repository context, update the brief/state with confirmed facts, choose the first executable milestone, and proceed when unblocked."
