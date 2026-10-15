@@ -1,0 +1,42 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Build output
+.next/
+dist/
+build/
+out/
+coverage/
+
+# Caches and temp files
+.cache/
+.tmp/
+tmp/
+*.log
+*.pid
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local editor / OS state
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local tool state
+.codex/
