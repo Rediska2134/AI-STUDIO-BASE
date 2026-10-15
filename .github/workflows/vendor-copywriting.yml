@@ -1,0 +1,56 @@
+name: Vendor copywriting skill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vendor-copywriting.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  vendor-copywriting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install copywriting skill
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm-cache
+        run: |
+          mkdir -p "$npm_config_cache"
+          npx --yes skills add https://github.com/coreyhaines31/marketingskills \
+            --skill copywriting \
+            --agent codex \
+            --copy \
+            --yes
+
+      - name: Verify installation
+        run: |
+          test -f .agents/skills/copywriting/SKILL.md
+          test -f .agents/skills/copywriting/references/ai-tells.md
+          test -f .agents/skills/copywriting/references/copy-frameworks.md
+          test -f .agents/skills/copywriting/references/natural-transitions.md
+          if find .agents/skills/copywriting -type l -print -quit | grep -q .; then
+            echo 'ERROR: symlink found in vendored copywriting skill'
+            exit 1
+          fi
+
+      - name: Commit vendored skill
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/skills/copywriting
+          if git diff --cached --quiet; then
+            echo 'No copywriting changes to commit.'
+            exit 0
+          fi
+          git commit -m 'chore: vendor copywriting skill'
+          git push origin HEAD:main
