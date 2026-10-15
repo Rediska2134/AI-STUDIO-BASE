@@ -1,0 +1,63 @@
+name: Vendor ui-ux-pro-max Codex skill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vendor-ui-ux-pro-max.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  vendor-ui-ux-pro-max:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Prepare npm cache
+        run: mkdir -p "$RUNNER_TEMP/npm-cache"
+
+      - name: Install ui-ux-pro-max
+        env:
+          npm_config_cache: ${{ runner.temp }}/npm-cache
+        run: |
+          npx -y ui-ux-pro-max-cli@latest init --ai codex --force
+
+      - name: Verify ui-ux-pro-max
+        run: |
+          test -f .agents/skills/ui-ux-pro-max/SKILL.md
+          test -f .agents/skills/ui-ux-pro-max/scripts/search.py
+          test -f .agents/skills/ui-ux-pro-max/scripts/design_system.py
+          test -f .agents/skills/ui-ux-pro-max/data/products.csv
+          test -f .agents/skills/ui-ux-pro-max/data/styles.csv
+          python3 .agents/skills/ui-ux-pro-max/scripts/search.py "premium digital product studio" --domain style -n 3 >/tmp/uiux-smoke.txt
+          test -s /tmp/uiux-smoke.txt
+
+      - name: Verify autonomous copy
+        run: |
+          if find .agents/skills/ui-ux-pro-max -type l -print -quit | grep -q .; then
+            echo 'ERROR: symlinks found under ui-ux-pro-max; vendored skill must be autonomous.'
+            find .agents/skills/ui-ux-pro-max -type l -print
+            exit 1
+          fi
+
+      - name: Commit vendored ui-ux-pro-max
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .agents/skills/ui-ux-pro-max
+          if git diff --cached --quiet; then
+            echo 'ui-ux-pro-max already up to date.'
+            exit 0
+          fi
+          git commit -m 'chore: vendor ui-ux-pro-max Codex skill'
+          git push origin HEAD:main
