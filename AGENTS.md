@@ -12,6 +12,7 @@ All vendored skills live under `.agents/skills/` and travel with the repository.
 - Treat third-party skill source files as vendored dependencies: preserve their contents unless intentionally updating them.
 - Load only the specialist skills that materially help the current task. Do not stack every skill into every prompt.
 - Before changing shared AI infrastructure, plugin/MCP/hook policy, or the template architecture itself, read `AI_RUNTIME.md`.
+- Before substantial UI/design work, use the repo-local `studio-design` workflow and read `STUDIO_DESIGN_SYSTEM.md` plus project-local design rules.
 
 ## 2. Project source of truth
 
@@ -46,6 +47,8 @@ If verification cannot be performed, state that limitation explicitly instead of
 ## 5. Subagents and delegation
 
 Subagents are a runtime capability, not repository files. Use them when the active Codex runtime exposes multi-agent tools and parallel delegation would materially improve speed or quality.
+
+Before substantial parallel work, read `AI_ORCHESTRATION.md` and define non-overlapping task/file ownership.
 
 Good delegation targets:
 - independent codebase exploration in separate areas;
@@ -90,11 +93,14 @@ When work depends on current OpenAI API, Agents API/SDK, Codex, plugins, MCP, ho
 
 Use the installed specialist skills when they match the task. For example:
 
+- studio-wide visual direction / reference calibration / UI consistency: `studio-design`
 - browser testing / screenshots / live UI QA: `agent-browser`
-- UI / website direction: `ui-ux-pro-max`, `frontend-design`, `web-design-guidelines`
+- specialist UI / website reasoning: `ui-ux-pro-max`, `frontend-design`, `web-design-guidelines`
 - marketing page copy / headlines / CTAs: `copywriting`
 - planning stress-test: `grill-me` / `grilling`
 - video / motion: `hyperframes`, with `hyperframes-creative` when relevant
 - issue / PR triage: `triage`, with `domain-modeling` when its workflow requires it
 
 Do not use a specialist merely because it exists. Trigger it when its workflow improves the task.
+
+For design calibration, capture specific observations in `docs/REFERENCE_CAPTURE.md` and promote only validated reusable preferences into `STUDIO_DESIGN_SYSTEM.md`.
