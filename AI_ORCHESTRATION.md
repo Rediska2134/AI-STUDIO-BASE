@@ -15,6 +15,8 @@ Every substantial task has one coordinator responsible for:
 
 Parallel workers produce evidence and implementation pieces. They do not independently declare the overall task complete.
 
+Reusable role definitions live under `.agents/roles/`. When delegating, use `.agents/subagents/TASK_TEMPLATE.md` as the task contract.
+
 ## 2. Good parallel lanes
 
 Delegate work when tasks can proceed independently.
@@ -51,32 +53,18 @@ Before parallel work starts, record for each worker:
 
 If ownership cannot be described clearly, keep the work sequential.
 
-## 4. Suggested studio roles
+## 4. Reusable studio roles
 
-Roles are temporary task shapes, not permanent personas.
+Concrete reusable role specs:
 
-### Coordinator / primary Codex
+- `.agents/roles/coordinator.md` — architecture, decomposition, integration and final verification;
+- `.agents/roles/frontend-implementer.md` — bounded frontend/UI implementation;
+- `.agents/roles/design-reviewer.md` — independent visual review against studio/project rules;
+- `.agents/roles/qa-reviewer.md` — independent runtime, responsive and edge-case verification;
+- `.agents/roles/scope-guard.md` — scope, delivery-risk and premature-assumption review;
+- `.agents/roles/researcher.md` — current docs/reference research without silent production edits.
 
-Owns:
-
-- architecture;
-- task decomposition;
-- shared contracts;
-- integration;
-- final QA;
-- `PROJECT_STATE.md`.
-
-### Implementation worker
-
-Owns one bounded feature or layer with explicit file boundaries.
-
-### Research / reference worker
-
-Collects current documentation, examples, references, risks, or comparison evidence. Does not silently change production code.
-
-### QA / review worker
-
-Reviews rendered behavior, tests, accessibility, edge cases, or code quality independently from the implementer.
+Roles are durable task shapes, not permanent autonomous processes. Runtime support decides whether they can execute concurrently.
 
 ### Secondary coding agent (for example Claude Code)
 
@@ -84,7 +72,22 @@ Use only when there is enough independent work to justify a second full coding s
 
 It must receive the same repository source of truth and explicit ownership. Do not use a second agent merely because the first agent is available; use it when parallel throughput is the bottleneck.
 
-## 5. Branch / file conflict rule
+## 5. Default substantial UI / demo loop
+
+For a meaningful premium UI milestone, prefer the workflow in `.agents/subagents/DEMO_SQUAD.md` when the runtime supports parallel workers:
+
+1. coordinator freezes the slice, acceptance criteria and ownership;
+2. frontend implementer builds the assigned slice;
+3. design reviewer and QA reviewer inspect independently once it is renderable;
+4. scope guard checks milestone drift and premature assumptions;
+5. coordinator classifies findings and assigns fixes;
+6. implementer fixes only assigned findings;
+7. QA rechecks fixes;
+8. coordinator performs integration verification and updates project state.
+
+Do not invoke the whole squad for tiny edits. Use it where independent review materially improves speed or quality.
+
+## 6. Branch / file conflict rule
 
 For separate full coding agents, prefer one of these:
 
@@ -95,7 +98,7 @@ Never intentionally assign two coding agents to edit the same files concurrently
 
 A coordinator reviews and integrates before treating the combined work as complete.
 
-## 6. Context contract
+## 7. Context contract
 
 Before substantial work, every coding worker should have access to the relevant subset of:
 
@@ -109,7 +112,7 @@ Before substantial work, every coding worker should have access to the relevant 
 
 Do not depend on chat-only decisions for critical implementation rules.
 
-## 7. Verification ownership
+## 8. Verification ownership
 
 Each worker verifies its own bounded result.
 
@@ -125,7 +128,7 @@ The coordinator then performs integration verification using the strongest pract
 
 Passing one worker's local checks is not proof that the integrated project works.
 
-## 8. When to add another agent
+## 9. When to add another agent
 
 Add parallel capacity when at least one is true:
 
@@ -136,7 +139,7 @@ Add parallel capacity when at least one is true:
 
 Do not add an agent when the real bottleneck is client feedback, unclear requirements, missing assets, unresolved architecture, or external account access.
 
-## 9. Production-speed rule
+## 10. Production-speed rule
 
 The goal of multi-agent work is shorter wall-clock delivery without reducing quality.
 
